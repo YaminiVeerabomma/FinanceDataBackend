@@ -2,11 +2,18 @@ package com.example.FinanceDataBackend.entity;
 
 
 
+
+
+import com.example.FinanceDataBackend.Enum.Role;
+import com.example.FinanceDataBackend.Enum.UserStatus;
+
 import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
 @Data
+
+@Table(name = "users")
 public class User {
 
     @Id
@@ -14,9 +21,15 @@ public class User {
     private Long id;
 
     private String name;
-    private String email;
-    private String role; // ADMIN, ANALYST, VIEWER
-    private boolean active;
 
-    
+    @Column(unique = true)
+    private String email;
+
+    private String password;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    @Enumerated(EnumType.STRING)
+    private UserStatus status;
 }
