@@ -3,57 +3,86 @@ package com.example.FinanceDataBackend.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.FinanceDataBackend.Enum.Role;
 import com.example.FinanceDataBackend.Enum.UserStatus;
-import com.example.FinanceDataBackend.dto.UserDTO;
 import com.example.FinanceDataBackend.entity.User;
+import com.example.FinanceDataBackend.exception.CustomException;
 import com.example.FinanceDataBackend.repository.UserRepository;
+
 
 @Service
 public class UserService {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserRepository userRepo;
 
-    public User createUser(UserDTO dto) {
-        if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
-            throw new RuntimeException("Email already exists");
+    @Autowired
+    private PasswordEncoder encoder;
+
+    // ✅ CREATE USER
+    public User createUser(User user) {
+
+        if (userRepo.findByEmail(user.getEmail()).isPresent()) {
+            throw new CustomException("User already exists");
         }
-        User user = new User();
-        user.setName(dto.getName());
-        user.setEmail(dto.getEmail());
-        user.setPassword(dto.getPassword());
-        user.setRole(dto.getRole() != null ? dto.getRole() : Role.VIEWER);
-        user.setStatus(dto.getStatus() != null ? dto.getStatus() : UserStatus.ACTIVE);
 
-        return userRepository.save(user);
+        user.setPassword(encoder.encode(user.getPassword()));
+
+        // Default values
+        if (user.getRole() == null) {
+            user.setRole(Role.VIEWER);
+        }
+
+        if (user.getStatus() == null) {
+            user.setStatus(UserStatus.ACTIVE);
+        }
+
+        return userRepo.save(user);
     }
 
-    public User getUserById(Long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
-    }
-
-    public User updateUser(Long id, UserDTO dto) {
-        User user = getUserById(id);
-
-        user.setName(dto.getName());
-        user.setEmail(dto.getEmail());
-        user.setPassword(dto.getPassword());
-        user.setRole(dto.getRole());
-        user.setStatus(dto.getStatus());
-
-        return userRepository.save(user);
-    }
-
-    public void deleteUser(Long id) {
-        User user = getUserById(id);
-        userRepository.delete(user);
-    }
-
+    // ✅ GET ALL USERS (Admin only)
     public List<User> getAllUsers() {
-        return userRepository.findAll();
+        return userRepo.findAll();
+    }
+
+    // ✅ GET USER BY ID
+    public User getUserById(Long id) {
+        return userRepo.findById(id)
+                .orElseThrow(() -> new CustomException("User not found"));
+    }
+
+    // ✅ UPDATE USER ROLE
+    public User updateUserRole(Long id, Role role) {
+
+        User user = getUserById(id);
+        user.setRole(role);
+
+        return userRepo.save(user);
+    }
+
+    // ✅ ACTIVATE USER
+    public User activateUser(Long id) {
+
+        User user = getUserById(id);
+        user.setStatus(UserStatus.ACTIVE);
+
+        return userRepo.save(user);
+    }
+
+    // ✅ DEACTIVATE USER
+    public User deactivateUser(Long id) {
+
+        User user = getUserById(id);
+        user.setStatus(UserStatus.INACTIVE);
+
+        return userRepo.save(user);
+    }
+
+    // ✅ DELETE USER
+    public void deleteUser(Long id) {
+        userRepo.deleteById(id);
     }
 }

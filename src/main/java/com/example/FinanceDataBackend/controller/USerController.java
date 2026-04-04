@@ -1,55 +1,61 @@
 package com.example.FinanceDataBackend.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import java.util.List;
 
-import com.example.FinanceDataBackend.dto.UserDTO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import com.example.FinanceDataBackend.Enum.Role;
+import com.example.FinanceDataBackend.entity.User;
 import com.example.FinanceDataBackend.service.UserService;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/users")
 public class UserController {
 
     @Autowired
-    private UserService userService;
+    private UserService service;
 
-    // 1. CREATE USER
+    // ✅ Admin only
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping
-    public ResponseEntity<?> createUser(@RequestBody UserDTO dto) {
-        return ResponseEntity.ok(userService.createUser(dto));
+    public User create(@RequestBody User user) {
+        return service.createUser(user);
     }
 
-    // 2. GET ALL USERS
+    // ✅ Admin only
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping
-    public ResponseEntity<?> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+    public List<User> getAll() {
+        return service.getAllUsers();
     }
 
-    // 3. GET USER BY ID
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getUser(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.getUserById(id));
+    // ✅ Admin only
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PutMapping("/{id}/role")
+    public User updateRole(@PathVariable Long id, @RequestParam Role role) {
+        return service.updateUserRole(id, role);
     }
 
-    // 4. UPDATE USER
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateUser(@PathVariable Long id,
-                                        @RequestBody UserDTO dto) {
-        return ResponseEntity.ok(userService.updateUser(id, dto));
+    // ✅ Admin only
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PutMapping("/{id}/activate")
+    public User activate(@PathVariable Long id) {
+        return service.activateUser(id);
     }
 
-    // 5. DELETE USER
+    // ✅ Admin only
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PutMapping("/{id}/deactivate")
+    public User deactivate(@PathVariable Long id) {
+        return service.deactivateUser(id);
+    }
+
+    // ✅ Admin only
+    @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
-        return ResponseEntity.ok("User deleted successfully");
+    public void delete(@PathVariable Long id) {
+        service.deleteUser(id);
     }
 }
