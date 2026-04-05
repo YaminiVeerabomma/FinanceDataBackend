@@ -20,10 +20,14 @@ public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
     private final CustomUserDetailsService userDetailsService;
+    private final RateLimitingFilter rateLimitingFilter;
 
-    public SecurityConfig(JwtFilter jwtFilter, CustomUserDetailsService userDetailsService) {
+    public SecurityConfig(JwtFilter jwtFilter,
+                          CustomUserDetailsService userDetailsService,
+                          RateLimitingFilter rateLimitingFilter) {
         this.jwtFilter = jwtFilter;
         this.userDetailsService = userDetailsService;
+        this.rateLimitingFilter = rateLimitingFilter;
     }
 
     @Bean
@@ -31,35 +35,19 @@ public class SecurityConfig {
         http
             .csrf().disable()
             .authorizeHttpRequests(auth -> auth
-
-                // ✅ Swagger (IMPORTANT)
-                .requestMatchers(
-                        "/swagger-ui/**",
-                        "/v3/api-docs/**",
-                        "/swagger-resources/**",
-                        "/webjars/**"
-                ).permitAll()
-
-                // ✅ Auth APIs
+                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
-
-                // ✅ CORS preflight
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-
-                // 🔐 Role-based APIs
                 .requestMatchers("/dashboard/**").hasAnyRole("VIEWER","ANALYST","ADMIN")
                 .requestMatchers("/records/**").authenticated()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
-
                 .anyRequest().authenticated()
             )
-            .exceptionHandling()
-                .accessDeniedHandler(accessDeniedHandler())
+            .exceptionHandling().accessDeniedHandler(accessDeniedHandler())
             .and()
-            .sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            )
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authenticationProvider(authenticationProvider())
+            .addFilterBefore(rateLimitingFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
@@ -89,8 +77,7 @@ public class SecurityConfig {
             response.setContentType("application/json");
             response.setStatus(403);
             response.getWriter().write(
-                "{\"error\":\"Access Denied\",\"message\":\"" 
-                + accessDeniedException.getMessage() + "\"}"
+                "{\"error\":\"Access Denied\",\"message\":\"" + accessDeniedException.getMessage() + "\"}"
             );
         };
     }
