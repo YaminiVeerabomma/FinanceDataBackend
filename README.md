@@ -202,4 +202,3 @@ For questions or support, please contact [your-email@example.com](mailto:your-em
 
 ---
 
-**Last Updated**: 2026-04-05
