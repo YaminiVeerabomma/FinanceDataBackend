@@ -35,21 +35,25 @@ public class JwtFilter extends OncePerRequestFilter {
         String header = request.getHeader("Authorization");
 
         if (header != null && header.startsWith("Bearer ")) {
+
             String token = header.substring(7);
 
             try {
                 String email = jwtUtil.extractEmail(token);
 
                 if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+
                     User user = userRepo.findByEmail(email).orElse(null);
 
                     if (user != null && user.getStatus() == UserStatus.ACTIVE) {
+
                         UsernamePasswordAuthenticationToken auth =
                                 new UsernamePasswordAuthenticationToken(
                                         user.getEmail(),
                                         null,
                                         List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
                                 );
+
                         SecurityContextHolder.getContext().setAuthentication(auth);
                     }
                 }
@@ -62,10 +66,13 @@ public class JwtFilter extends OncePerRequestFilter {
         chain.doFilter(request, response);
     }
 
+    // ✅ VERY IMPORTANT (Fix Swagger 403)
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        // Skip JWT check for register/login endpoints
         String path = request.getServletPath();
-        return path.startsWith("/auth");
+
+        return path.startsWith("/auth") ||
+               path.startsWith("/swagger-ui") ||
+               path.startsWith("/v3/api-docs");
     }
 }

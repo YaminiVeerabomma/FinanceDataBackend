@@ -3,6 +3,7 @@ package com.example.FinanceDataBackend.security;
 import com.example.FinanceDataBackend.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -30,16 +31,34 @@ public class SecurityConfig {
         http
             .csrf().disable()
             .authorizeHttpRequests(auth -> auth
+
+                // ✅ Swagger (IMPORTANT)
+                .requestMatchers(
+                        "/swagger-ui/**",
+                        "/v3/api-docs/**",
+                        "/swagger-resources/**",
+                        "/webjars/**"
+                ).permitAll()
+
+                // ✅ Auth APIs
                 .requestMatchers("/api/auth/**").permitAll()
+
+                // ✅ CORS preflight
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                // 🔐 Role-based APIs
                 .requestMatchers("/dashboard/**").hasAnyRole("VIEWER","ANALYST","ADMIN")
-                .requestMatchers("/records/**").authenticated()  // role check in controller
+                .requestMatchers("/records/**").authenticated()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
+
                 .anyRequest().authenticated()
             )
             .exceptionHandling()
                 .accessDeniedHandler(accessDeniedHandler())
             .and()
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
             .authenticationProvider(authenticationProvider())
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -69,8 +88,10 @@ public class SecurityConfig {
         return (request, response, accessDeniedException) -> {
             response.setContentType("application/json");
             response.setStatus(403);
-            response.getWriter().write("{\"error\":\"Access Denied\",\"message\":\""
-                + accessDeniedException.getMessage() + "\"}");
+            response.getWriter().write(
+                "{\"error\":\"Access Denied\",\"message\":\"" 
+                + accessDeniedException.getMessage() + "\"}"
+            );
         };
     }
 }

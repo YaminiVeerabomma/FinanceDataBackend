@@ -11,6 +11,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.FinanceDataBackend.service.DashboardService;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+@Tag(name = "Dashboard", description = "Financial summary APIs")
 @RestController
 @RequestMapping("/dashboard")
 public class DashboardController {
@@ -18,6 +23,7 @@ public class DashboardController {
     @Autowired
     private DashboardService service;
 
+    @Operation(summary = "Get income, expense, balance summary")
     @PreAuthorize("hasAnyAuthority('VIEWER','ANALYST','ADMIN')")
     @GetMapping
     public Map<String, Double> summary() {

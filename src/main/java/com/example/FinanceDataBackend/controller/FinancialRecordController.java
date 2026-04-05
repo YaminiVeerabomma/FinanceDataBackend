@@ -12,6 +12,11 @@ import com.example.FinanceDataBackend.entity.FinancialRecord;
 import com.example.FinanceDataBackend.exception.AccessDeniedException;
 import com.example.FinanceDataBackend.service.FinancialRecordService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+
+@Tag(name = "Financial Records", description = "Manage financial records")
 @RestController
 @RequestMapping("/records")
 public class FinancialRecordController {
@@ -20,6 +25,7 @@ public class FinancialRecordController {
     private FinancialRecordService service;
 
     // GET RECORDS (Analyst + Admin)
+    @Operation(summary = "Get all financial records with filters (Analyst & Admin)")
     @GetMapping
     public List<FinancialRecord> getAll(
             @RequestParam(required = false) String category,
@@ -37,6 +43,7 @@ public class FinancialRecordController {
     }
 
     // CREATE RECORD (Admin Only)
+    @Operation(summary = "Create financial record (Admin only)")
     @PostMapping
     public FinancialRecord create(@RequestBody FinancialRecord record, Authentication auth) {
         String role = auth.getAuthorities().stream().findFirst().get().getAuthority();
@@ -47,6 +54,7 @@ public class FinancialRecordController {
     }
 
     // DELETE RECORD (Admin Only)
+    @Operation(summary = "Update financial record (Admin only)")
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id, Authentication auth) {
         String role = auth.getAuthorities().stream().findFirst().get().getAuthority();
@@ -57,6 +65,7 @@ public class FinancialRecordController {
     }
 
     // UPDATE RECORD (Admin Only)
+    @Operation(summary = "Update financial record (Admin only)")
     @PutMapping("/{id}")
     public FinancialRecord update(@PathVariable Long id, @RequestBody FinancialRecord record, Authentication auth) {
         String role = auth.getAuthorities().stream().findFirst().get().getAuthority();
