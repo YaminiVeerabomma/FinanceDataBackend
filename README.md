@@ -46,7 +46,7 @@ To design and develop a backend system that:
 
 ## 👥 Roles & Responsibilities
 
-### 👁 Viewer
+### 👁️ Viewer
 - View dashboard data only
 - Cannot access or modify records
 
@@ -54,7 +54,7 @@ To design and develop a backend system that:
 - View financial records
 - Access insights and summaries
 
-### 🛠 Admin
+### 🛠️ Admin
 Full access:
 - Create records
 - Update records
@@ -111,19 +111,28 @@ Full access:
 
 ---
 
-## 🧠 Architecture
+## 🏗️ Architecture
 
-Controller → Service → Repository → Database ↓ Security Layer (JWT + Rate Limiting)
-
-Code
+```
+Controller → Service → Repository → Database
+↓
+Security Layer (JWT + Rate Limiting)
+```
 
 ---
 
 ## 📁 Project Structure
 
-src/main/java/com/example/FinanceDataBackend/ │── controller/ │── service/ │── repository/ │── entity/ │── dto/ │── security/ │── exception/
-
-Code
+```
+src/main/java/com/example/FinanceDataBackend/
+├── controller/
+├── service/
+├── repository/
+├── entity/
+├── dto/
+├── security/
+└── exception/
+```
 
 ---
 
@@ -134,26 +143,43 @@ Code
 ```bash
 git clone https://github.com/YaminiVeerabomma/FinanceDataBackend.git
 cd FinanceDataBackend
-2️⃣ Setup Database
+```
+
+### 2️⃣ Setup Database
+
 Create MySQL database:
 
-SQL
+```sql
 CREATE DATABASE finance_db;
-Update application.properties:
+```
 
-properties
+Update `application.properties`:
+
+```properties
 spring.datasource.url=jdbc:mysql://localhost:3306/finance_db
 spring.datasource.username=root
 spring.datasource.password=your_password
-3️⃣ Build Project
-bash
+```
+
+### 3️⃣ Build Project
+
+```bash
 mvn clean install
-4️⃣ Run Application
-bash
+```
+
+### 4️⃣ Run Application
+
+```bash
 mvn spring-boot:run
-🔑 API Examples
-Login
-HTTP
+```
+
+---
+
+## 🔑 API Examples
+
+### Login
+
+```http
 POST /api/auth/login
 Content-Type: application/json
 
@@ -161,48 +187,92 @@ Content-Type: application/json
   "email": "user@example.com",
   "password": "password123"
 }
-Get Records
-HTTP
+```
+
+**Response:**
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "email": "user@example.com",
+  "role": "ANALYST"
+}
+```
+
+### Get Records
+
+```http
 GET /api/records?page=0&size=10
 Authorization: Bearer <token>
-Dashboard
-HTTP
+```
+
+### Dashboard
+
+```http
 GET /api/dashboard
 Authorization: Bearer <token>
-⚠️ Error Handling
-JSON
+```
+
+---
+
+## ⚠️ Error Handling
+
+```json
 {
   "status": 429,
   "error": "Too Many Requests",
   "message": "Try again after some time"
 }
-⭐ Optional Enhancements Implemented
-✅ JWT Authentication
-✅ Role-Based Access Control
-✅ Pagination
-✅ Rate Limiting
-✅ Swagger Documentation
-✅ Global Exception Handling
-🧪 What I Implemented
-Designed REST APIs for financial records
-Implemented JWT authentication & security
-Applied role-based authorization
-Built dashboard summary APIs
-Added pagination for scalability
-Implemented rate limiting for API protection
-Structured project using layered architecture
-📌 Assignment Coverage
-✔ User & Role Management
-✔ Financial Records CRUD
-✔ Dashboard APIs
-✔ Access Control
-✔ Validation & Error Handling
-✔ Data Persistence
-👩‍💻 Author
-Yamini Veerabomma 📧 yaminiveerabomma@gmail.com
+```
 
-📜 License
-MIT License
+---
 
-⭐ Final Note
+## ⭐ Optional Enhancements Implemented
+
+- ✅ JWT Authentication
+- ✅ Role-Based Access Control
+- ✅ Pagination
+- ✅ Rate Limiting
+- ✅ Swagger Documentation
+- ✅ Global Exception Handling
+
+---
+
+## 🧪 What I Implemented
+
+- Designed REST APIs for financial records
+- Implemented JWT authentication & security
+- Applied role-based authorization
+- Built dashboard summary APIs
+- Added pagination for scalability
+- Implemented rate limiting for API protection
+- Structured project using layered architecture
+
+---
+
+## 📌 Assignment Coverage
+
+- ✔️ User & Role Management
+- ✔️ Financial Records CRUD
+- ✔️ Dashboard APIs
+- ✔️ Access Control
+- ✔️ Validation & Error Handling
+- ✔️ Data Persistence
+
+---
+
+## 👩‍💻 Author
+
+**Yamini Veerabomma**  
+📧 [yaminiveerabomma@gmail.com](mailto:yaminiveerabomma@gmail.com)
+
+---
+
+## 📜 License
+
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## ⭐ Final Note
+
 This project focuses on building a secure, scalable, and well-structured backend system using modern best practices like JWT authentication, RBAC, pagination, and rate limiting.
