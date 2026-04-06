@@ -103,7 +103,7 @@ Full access:
 
 ---
 
-## ��� Swagger API Docs
+## 📚 Swagger API Docs
 
 - Interactive API testing
 - Easy to explore endpoints
@@ -112,3 +112,97 @@ Full access:
 ---
 
 ## 🧠 Architecture
+
+Controller → Service → Repository → Database ↓ Security Layer (JWT + Rate Limiting)
+
+Code
+
+---
+
+## 📁 Project Structure
+
+src/main/java/com/example/FinanceDataBackend/ │── controller/ │── service/ │── repository/ │── entity/ │── dto/ │── security/ │── exception/
+
+Code
+
+---
+
+## ⚙️ How to Run Project
+
+### 1️⃣ Clone Repository
+
+```bash
+git clone https://github.com/YaminiVeerabomma/FinanceDataBackend.git
+cd FinanceDataBackend
+2️⃣ Setup Database
+Create MySQL database:
+
+SQL
+CREATE DATABASE finance_db;
+Update application.properties:
+
+properties
+spring.datasource.url=jdbc:mysql://localhost:3306/finance_db
+spring.datasource.username=root
+spring.datasource.password=your_password
+3️⃣ Build Project
+bash
+mvn clean install
+4️⃣ Run Application
+bash
+mvn spring-boot:run
+🔑 API Examples
+Login
+HTTP
+POST /api/auth/login
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "password123"
+}
+Get Records
+HTTP
+GET /api/records?page=0&size=10
+Authorization: Bearer <token>
+Dashboard
+HTTP
+GET /api/dashboard
+Authorization: Bearer <token>
+⚠️ Error Handling
+JSON
+{
+  "status": 429,
+  "error": "Too Many Requests",
+  "message": "Try again after some time"
+}
+⭐ Optional Enhancements Implemented
+✅ JWT Authentication
+✅ Role-Based Access Control
+✅ Pagination
+✅ Rate Limiting
+✅ Swagger Documentation
+✅ Global Exception Handling
+🧪 What I Implemented
+Designed REST APIs for financial records
+Implemented JWT authentication & security
+Applied role-based authorization
+Built dashboard summary APIs
+Added pagination for scalability
+Implemented rate limiting for API protection
+Structured project using layered architecture
+📌 Assignment Coverage
+✔ User & Role Management
+✔ Financial Records CRUD
+✔ Dashboard APIs
+✔ Access Control
+✔ Validation & Error Handling
+✔ Data Persistence
+👩‍💻 Author
+Yamini Veerabomma 📧 yaminiveerabomma@gmail.com
+
+📜 License
+MIT License
+
+⭐ Final Note
+This project focuses on building a secure, scalable, and well-structured backend system using modern best practices like JWT authentication, RBAC, pagination, and rate limiting.
