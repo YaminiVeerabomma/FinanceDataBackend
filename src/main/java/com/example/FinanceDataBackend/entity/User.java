@@ -8,10 +8,13 @@ import com.example.FinanceDataBackend.Enum.Role;
 import com.example.FinanceDataBackend.Enum.UserStatus;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
+
 
 @Entity
 @Data
+
+
 
 @Table(name = "users")
 public class User {

@@ -60,11 +60,12 @@
         </dependency>
 
         <!-- Rate Limiting -->
-	<dependency>
-    <groupId>com.bucket4j</groupId>
-    <artifactId>bucket4j-core</artifactId>
-    <version>8.2.0</version>
-</dependency>
+        <dependency>
+            <groupId>com.bucket4j</groupId>
+            <artifactId>bucket4j-core</artifactId>
+            <version>8.2.0</version>
+        </dependency>
+
         <!-- MYSQL -->
         <dependency>
             <groupId>com.mysql</groupId>
@@ -102,5 +103,29 @@
             </plugin>
         </plugins>
     </build>
+
+    <!-- PRODUCTION PROFILE -->
+    <profiles>
+        <profile>
+            <id>production</id>
+            <properties>
+                <!-- Spring Boot profile for production -->
+                <spring.profiles.active>prod</spring.profiles.active>
+                <!-- Skip tests during production build -->
+                <skipTests>true</skipTests>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration>
+                            <fork>true</fork>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

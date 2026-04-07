@@ -1,5 +1,8 @@
 package com.example.FinanceDataBackend.dto;
 
+import lombok.Data;
+
+@Data
 public class AuthResponse {
 
     private String token;
