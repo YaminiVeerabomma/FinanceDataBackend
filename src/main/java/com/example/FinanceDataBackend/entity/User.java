@@ -1,21 +1,12 @@
 package com.example.FinanceDataBackend.entity;
 
-
-
-
-
 import com.example.FinanceDataBackend.Enum.Role;
 import com.example.FinanceDataBackend.Enum.UserStatus;
-
 import jakarta.persistence.*;
 import lombok.*;
 
-
 @Entity
 @Data
-
-
-
 @Table(name = "users")
 public class User {
 
@@ -25,14 +16,16 @@ public class User {
 
     private String name;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String email;
 
+    @Column(nullable = false)
     private String password;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Role role;
 
     @Enumerated(EnumType.STRING)
-    private UserStatus status;
+    private UserStatus status = UserStatus.ACTIVE;  // default
 }
